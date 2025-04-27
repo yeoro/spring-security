@@ -17,6 +17,12 @@ public class JoinService {
 
     public void joinProcess(JoinDTO joinDTO) {
 
+        // username 검증 로직
+        boolean isUser = userRepository.existsByUsername(joinDTO.getUsername());
+        if(isUser) {
+            return;
+        }
+
         UserEntity data = new UserEntity();
         data.setUsername(joinDTO.getUsername());
         data.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
