@@ -2,6 +2,7 @@ package com.yeoro.testsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,11 +28,17 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
+        // http basic 사용을 위한 form login 주석처리
+//        http
+//                .formLogin((auth) -> auth.loginPage("/login")
+//                        .loginProcessingUrl("/loginProc")
+//                        .permitAll()
+//                );
+
+        // http basic → 브라우저 헤더에 username/password를 전달하여 로그인하는 방식
+        // /admin 접근시 브라우저 팝업창에 로그인 정보 입력
         http
-                .formLogin((auth) -> auth.loginPage("/login")
-                        .loginProcessingUrl("/loginProc")
-                        .permitAll()
-                );
+                .httpBasic(Customizer.withDefaults());
 
         // stateless, jwt 방식의 경우 세션이 없기 때문에 csrf 공격에 대한 부담이 없어 disable 처리
 //        http
