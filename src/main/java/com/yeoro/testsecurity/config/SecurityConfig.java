@@ -33,8 +33,15 @@ public class SecurityConfig {
                         .permitAll()
                 );
 
+        // stateless, jwt 방식의 경우 세션이 없기 때문에 csrf 공격에 대한 부담이 없어 disable 처리
+//        http
+//                .csrf((auth) -> auth.disable());
+
+        // csrf 설정시 logout은 POST 방식으로 요청해야하나, 아래 방식을 통해 GET 방식으로 요청 가능
         http
-                .csrf((auth) -> auth.disable());
+                .logout((auth) -> auth.logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                );
 
         http
                 .sessionManagement((auth) -> auth
@@ -47,6 +54,7 @@ public class SecurityConfig {
                 .sessionManagement((auth) -> auth
                         .sessionFixation().changeSessionId()
                 );
+
 
         return http.build();
     }

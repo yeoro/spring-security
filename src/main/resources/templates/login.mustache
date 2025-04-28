@@ -1,7 +1,12 @@
-<html>
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- csrf enable 상태에서 ajax 요청시 content 값을 포함하여 요청 -->
+    <!-- XMLHttpRequest 요청시 setRequestHeader를 통해 _csrf, _csrf_header Key에 값을 넣어 요청 -->
+    <meta name="_csrf" content="{{_csrf.token}}" />
+    <meta name="_csrf_header" content="{{_csrf.headerName}}" />
     <title>Login Page</title>
 </head>
 <body>
@@ -12,6 +17,7 @@ login page
 <form action="/loginProc" method="post" name="loginForm">
     <input id="username" type="text" name="username" placeholder="id" />
     <input id="password" type="password" name="password" placeholder="password" />
+    <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
     <input type="submit" value="login" />
 </form>
 </body>
