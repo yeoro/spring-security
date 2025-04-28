@@ -19,15 +19,12 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public RoleHierarchy roleHierarchy() {
-
-        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
-
-        // 권한 추가될 경우 개행문자 삽입
-        hierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER\n" +
-                "ROLE_USER1 > ROLE_USER2");
-
-        return hierarchy;
+        return RoleHierarchyImpl.withDefaultRolePrefix()
+                .role("ADMIN").implies("USER1") // ADMIN > USER1
+                .role("USER1").implies("USER2") // USER1 > USER2
+                .build();
     }
 
     @Bean
