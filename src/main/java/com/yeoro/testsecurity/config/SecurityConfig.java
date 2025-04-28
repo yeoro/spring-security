@@ -2,6 +2,8 @@ package com.yeoro.testsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +19,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    public RoleHierarchy roleHierarchy() {
+
+        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
+
+        // 권한 추가될 경우 개행문자 삽입
+        hierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER\n" +
+                "ROLE_USER1 > ROLE_USER2");
+
+        return hierarchy;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -24,6 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/login", "/loginProc", "/join", "/joinProc").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/manage").hasRole("USER1") // role hierarchy에 따라 USER1 이상 권한 모두 접근 가능
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 );
@@ -70,16 +84,22 @@ public class SecurityConfig {
 //    @Bean
 //    public UserDetailsService userDetailsService() {
 //
-//        UserDetails user1 = User.builder()
-//                .username("user1")
+//        UserDetails admin = User.builder()
+//                .username("admin")
 //                .password(bCryptPasswordEncoder().encode("1234"))
 //                .roles("ADMIN")
 //                .build();
 //
-//        UserDetails user2 = User.builder()s
+//        UserDetails user1 = User.builder()
+//                .username("user1")
+//                .password(bCryptPasswordEncoder().encode("1234"))
+//                .roles("USER1")
+//                .build();
+//
+//        UserDetails user2 = User.builder()
 //                .username("user2")
 //                .password(bCryptPasswordEncoder().encode("1234"))
-//                .roles("USER")
+//                .roles("USER2")
 //                .build();
 //
 //        return new InMemoryUserDetailsManager(user1, user2);
